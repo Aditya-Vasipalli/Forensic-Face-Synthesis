@@ -1,0 +1,22 @@
+{
+  "text_attributes": {
+    "age": {
+      "values": ["child", "teenager", "young_adult", "adult", "middle_aged", "senior"],
+      "embed_dim": 16
+    },
+    "hair_color": {
+      "values": ["black", "brown", "blonde", "red", "gray", "white"],
+      "embed_dim": 16
+    },
+    "gender": {
+      "values": ["male", "female", "other"],
+      "embed_dim": 16
+    },
+    "skin_tone": {
+      "values": ["light", "medium", "brown", "dark"],
+      "embed_dim": 16
+    }
+  },
+  "total_embed_dim": 64,
+  "fusion_method": "concat"
+}
