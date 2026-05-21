@@ -12,30 +12,38 @@
 ───────────────────────────────────────────── */
 
 const AGING_API = "http://localhost:7001/api/aging/generate";
+const MODELS_API_BASE = "http://localhost:7002";
 
 // ── API stubs ──────────────────────────────────────────────────────────────
 const API = {
   async generate(model, imageFile) {
-    // Endpoint: POST /api/${model}/generate
-    // FormData: { image: File }
-    // Response: { output_url: string, inference_ms: number }
-    // ----- STUB: returns the input image after simulated delay -----
-    await delay(1400 + Math.random() * 800);
+    const fd = new FormData();
+    fd.append("image", imageFile);
+    const res = await fetch(`${MODELS_API_BASE}/api/${model}/generate`, {
+      method: "POST",
+      body: fd,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Generation failed");
     return {
-      output_url: await fileToDataURL(imageFile),
-      inference_ms: Math.round(1200 + Math.random() * 600),
+      output_url: data.output_url,
+      inference_ms: data.inference_ms ?? 0,
     };
   },
 
   async enhance(imageFile, scale, denoise, sharpen) {
-    // Endpoint: POST /api/clarify/enhance
-    // FormData: { image: File, scale: number, denoise: bool, sharpen: bool }
-    // Response: { output_url: string }
-    // ----- STUB: returns input image after simulated delay -----
-    await delay(1800 + Math.random() * 600);
-    return {
-      output_url: await fileToDataURL(imageFile),
-    };
+    const fd = new FormData();
+    fd.append("image", imageFile);
+    fd.append("scale", scale);
+    fd.append("denoise", denoise);
+    fd.append("sharpen", sharpen);
+    const res = await fetch("http://localhost:7003/api/clarify/enhance", {
+      method: "POST",
+      body: fd,
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "Enhancement failed");
+    return { output_url: data.output_url };
   },
 };
 
@@ -165,7 +173,11 @@ document.querySelectorAll(".tab").forEach((tab) => {
     tab.classList.add("active");
     generateState.model = tab.dataset.model;
     document.getElementById("model-badge").textContent =
-      generateState.model === "cyclegan" ? "CycleGAN" : "Pix2Pix";
+      {
+        cyclegan: "CycleGAN",
+        pix2pix: "Pix2Pix",
+        "pix2pix-arcface": "Pix2Pix+ID",
+      }[generateState.model] ?? generateState.model;
   });
 });
 
@@ -212,7 +224,11 @@ document.getElementById("generate-btn").addEventListener("click", async () => {
     document.getElementById("cs-before-img").src = sketchUrl;
     document.getElementById("cs-after-img").src = result.output_url;
     document.getElementById("model-badge").textContent =
-      generateState.model === "cyclegan" ? "CycleGAN" : "Pix2Pix";
+      {
+        cyclegan: "CycleGAN",
+        pix2pix: "Pix2Pix",
+        "pix2pix-arcface": "Pix2Pix+ID",
+      }[generateState.model] ?? generateState.model;
     document.getElementById("download-btn").href = result.output_url;
 
     document.getElementById("output-placeholder").classList.add("hidden");
