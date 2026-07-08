@@ -1,1 +1,7 @@
 /archive
+/dataset
+/__pycache__
+/.venv
+/.vscode
+*.pt
+*.pth
