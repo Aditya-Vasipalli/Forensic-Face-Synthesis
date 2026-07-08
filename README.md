@@ -345,6 +345,4 @@ If you use ForenSynth in your research, please cite:
 - **Pix2Pix** by Phillip Isola et al.
 - **CycleGAN** by Jun-Yan Zhu et al.
 
----
 
-**Made with ❤️ for forensic research and development.**
